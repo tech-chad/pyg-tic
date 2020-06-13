@@ -90,6 +90,7 @@ def game_loop(win: pygame.Surface) -> None:
     game_board = ["" for _ in range(9)]
     turn = 0
     run = True
+    state = "playing"
 
     while run:
         draw_grid(win)
@@ -100,10 +101,24 @@ def game_loop(win: pygame.Surface) -> None:
             pygame.draw.rect(win, (0, 0, 0), (40, 400, 300, 80))
             win.blit(player_o, (60, 420))
 
+        winner = check_for_winner(game_board)
+        if winner == "No":
+            pass
+        else:
+            pygame.draw.rect(win, (0, 0, 0), (40, 400, 300, 90))
+            win.blit(game_over, (85, 400))
+            state = "game over"
+            if winner == "X":
+                win.blit(x_winner, (43, 450))
+            elif winner == "O":
+                win.blit(o_winner, (43, 450))
+            elif winner == "Stalemate":
+                win.blit(stalemate, (98, 450))
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            if event.type == pygame.MOUSEBUTTONDOWN and state == "playing":
                 mouse_x, mouse_y = pygame.mouse.get_pos()
                 grid_pos = get_grid_location(mouse_x, mouse_y)
                 if grid_pos:
@@ -115,18 +130,6 @@ def game_loop(win: pygame.Surface) -> None:
                         draw_o(win, *POS_DICT[grid_pos])
                         game_board[grid_pos - 1] = "O"
                         turn = 0
-        state = check_for_winner(game_board)
-        if state == "No":
-            pass
-        else:
-            pygame.draw.rect(win, (0, 0, 0), (40, 400, 300, 90))
-            win.blit(game_over, (85, 400))
-            if state == "X":
-                win.blit(x_winner, (43, 450))
-            elif state == "O":
-                win.blit(o_winner, (43, 450))
-            elif state == "Stalemate":
-                win.blit(stalemate, (98, 450))
 
         pygame.display.update()
 
