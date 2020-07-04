@@ -78,6 +78,45 @@ def check_for_winner(game_board: list) -> str:
         return "Stalemate"
 
 
+def main_menu(win: pygame.Surface) -> str:
+    font = pygame.font.SysFont('comicsans', 60, False)
+    play_string = font.render("PLAY", 1, (0, 0, 0))
+    quit_string = font.render("QUIT", 1, (0, 0, 0))
+    state = "quit"
+    run = True
+    win.fill((0, 0, 0))
+    while run:
+        pygame.draw.rect(win, (255, 255, 255), (100, 50, 200, 75))
+        pygame.draw.rect(win, (255, 255, 255), (100, 250, 200, 75))
+        win.blit(play_string, (150, 70))
+        win.blit(quit_string, (150, 270))
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                state = "quit"
+                run = False
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                mouse_x, mouse_y = pygame.mouse.get_pos()
+                if 100 <= mouse_x <= 300 and 50 <= mouse_y <= 150:
+                    state = "play"
+                    run = False
+                elif 100 <= mouse_x <= 300 and 250 <= mouse_y <= 350:
+                    state = "quit"
+                    run = False
+            keys = pygame.key.get_pressed()
+            if keys[pygame.K_p]:
+                state = "play"
+                run = False
+            elif keys[pygame.K_q]:
+                state = "quit"
+                run = False
+
+        pygame.display.update()
+
+    win.fill((0, 0, 0))
+    pygame.display.update()
+    return state
+
+
 def game_loop(win: pygame.Surface) -> None:
     font = pygame.font.SysFont('comicsans', 60, False)
     player_x = font.render("Player X Turn", 1, X_COLOR)
@@ -130,6 +169,8 @@ def game_loop(win: pygame.Surface) -> None:
                         draw_o(win, *POS_DICT[grid_pos])
                         game_board[grid_pos - 1] = "O"
                         turn = 0
+            if event.type == pygame.MOUSEBUTTONDOWN and state == "game over":
+                run = False
 
         pygame.display.update()
 
@@ -138,7 +179,13 @@ def main() -> None:
     pygame.init()
     win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("Tic Tac Toe")
-    game_loop(win)
+
+    while True:
+        value = main_menu(win)
+        if value == "play":
+            game_loop(win)
+        elif value == "quit":
+            break
 
 
 if __name__ == "__main__":
