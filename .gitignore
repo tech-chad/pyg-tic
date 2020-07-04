@@ -1,1 +1,4 @@
 /venv/
+build
+dist
+pyg_tic.egg-info
