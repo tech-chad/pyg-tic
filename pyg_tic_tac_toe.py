@@ -1,5 +1,6 @@
 # tic tac toe game using pygame
 import pygame
+from random import choice
 
 SCREEN_WIDTH = 400
 SCREEN_HEIGHT = 500
@@ -127,7 +128,7 @@ def game_loop(win: pygame.Surface) -> None:
     game_over = font.render("Game Over", 1, GAME_OVER_COLOR)
 
     game_board = ["" for _ in range(9)]
-    turn = 0
+    turn = choice((0, 1))
     run = True
     state = "playing"
 
